@@ -34,8 +34,8 @@ class BookingTerbaruSection extends StatelessWidget {
                 ),
               ],
             ),
-            
-            if (bookings.isEmpty) 
+
+            if (bookings.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Text(
@@ -44,7 +44,7 @@ class BookingTerbaruSection extends StatelessWidget {
                   style: TextStyle(color: Colors.grey),
                 ),
               )
-            else 
+            else
               ...bookings.map((booking) => _buildBookingItem(booking)).toList(),
           ],
         ),
@@ -96,11 +96,11 @@ class BookingTerbaruSection extends StatelessWidget {
   Widget _buildStatusChip(String paymentStatus) {
     Color chipColor;
     String statusText;
-    
+
     switch (paymentStatus) {
       case 'paid':
         chipColor = Colors.green[100]!;
-        statusText = 'Lunas';
+        statusText = 'Paid';
         break;
       case 'pending':
         chipColor = Colors.orange[100]!;
@@ -108,18 +108,15 @@ class BookingTerbaruSection extends StatelessWidget {
         break;
       case 'cancelled':
         chipColor = Colors.red[100]!;
-        statusText = 'Batal';
+        statusText = 'Cancelled';
         break;
       default:
         chipColor = Colors.grey[100]!;
         statusText = paymentStatus;
     }
-    
+
     return Chip(
-      label: Text(
-        statusText,
-        style: const TextStyle(fontSize: 12),
-      ),
+      label: Text(statusText, style: const TextStyle(fontSize: 12)),
       backgroundColor: chipColor,
       visualDensity: VisualDensity.compact,
     );
@@ -133,7 +130,7 @@ class BookingTerbaruSection extends StatelessWidget {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final bookingDay = DateTime(date.year, date.month, date.day);
-    
+
     if (bookingDay == today) {
       return 'Hari ini';
     } else if (bookingDay == today.add(const Duration(days: 1))) {

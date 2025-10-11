@@ -16,7 +16,7 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard TopTen Bali Tour'),
-        backgroundColor: Colors.green,
+        backgroundColor: const Color.fromARGB(255, 43, 50, 100),
         foregroundColor: Colors.white,
         actions: [
           IconButton(

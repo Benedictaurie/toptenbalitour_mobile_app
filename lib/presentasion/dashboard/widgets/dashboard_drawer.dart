@@ -12,7 +12,7 @@ class DashboardDrawer extends StatelessWidget {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Color.fromARGB(255, 43, 50, 100),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -20,7 +20,7 @@ class DashboardDrawer extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 30,
-                  child: Icon(Icons.account_circle, size: 40, color: Colors.green),
+                  child: Icon(Icons.account_circle, size: 40, color: Color.fromARGB(255, 43, 50, 100)),
                 ),
                 SizedBox(height: 10),
                 Text(
