@@ -4,7 +4,7 @@ class Driver {
   final String phone;
   final String vehicleType;
   final String licensePlate;
-  final String status; //status driver: 'active', 'inactive', 'on-duty'
+  final String status; //status driver: 'active', 'inactive', 'on-duty'//
   final DateTime? lastActive;
 
   Driver({

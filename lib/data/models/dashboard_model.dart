@@ -6,7 +6,7 @@ class Dashboard {
   final int driverAktifHariIni;
   final int bookingPerluKonfirmasi;
   final List<Booking> bookingTerbaru;
-  //final List<JadwalDriver> jadwalDriverHariIni;
+  //final List<JadwalDriver> jadwalDriverHariIni;//
 
   Dashboard({
     required this.totalBookingHariIni,
@@ -14,6 +14,6 @@ class Dashboard {
     required this.driverAktifHariIni,
     required this.bookingPerluKonfirmasi,
     required this.bookingTerbaru,
-    // required this.jadwalDriverHariIni,
+    // required this.jadwalDriverHariIni,//
   });
 }

@@ -27,7 +27,7 @@ class BookingListPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final booking = state.bookings[index];
                 return Card(
-                  // color: const Color.fromARGB(255, 255, 255, 255),
+                  // color: const Color.fromARGB(255, 255, 255, 255), //
                   margin: EdgeInsets.all(8),
                   child: ListTile(
                     title: Text(

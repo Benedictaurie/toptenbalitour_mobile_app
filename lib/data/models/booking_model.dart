@@ -12,7 +12,7 @@ class Booking {
   final String bookingStatus; // 'confirmed', 'completed', 'cancelled'
   final String? notes; //data didapat dr web
   final String? proofOfPayment; //data image didapat dr web
-  final DateTime? verifiedAt; 
+  final DateTime? verifiedAt; //tanggal verifikasi pembayaran oleh admin
   final DateTime createdAt;
   // final DateTime updatedAt;
   

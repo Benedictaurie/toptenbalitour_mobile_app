@@ -5,7 +5,7 @@ import 'package:toptenbalitour_app/presentasion/booking/pages/booking_list_page.
 class BookingTerbaruSection extends StatelessWidget {
   final List<Booking> bookings;
 
-  const BookingTerbaruSection({super.key, required this.bookings});
+  const BookingTerbaruSection({super.key, required this.bookings}); //
 
   @override
   Widget build(BuildContext context) {

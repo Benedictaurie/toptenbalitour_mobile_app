@@ -77,3 +77,4 @@ class BookingError extends BookingState {
   @override
   int get hashCode => message.hashCode;
 }
+//

@@ -5,15 +5,6 @@ import 'package:toptenbalitour_app/data/models/booking_model.dart';
 class BookingCubit extends Cubit<BookingState> {
   BookingCubit() : super(const BookingInitial());
 
-  // Contoh method fetch booking, bisa disambungkan dengan API atau sumber data lain
-  // Future<void> fetchBookings() async {
-  //   try {
-  //     emit(const BookingLoading());
-
-  //     // Simulasi delay pengambilan data misal dari API atau database
-  //     await Future.delayed(const Duration(seconds: 1));
-
-  // Contoh data booking statis, ganti dengan data nyata dari API/db
   final List<Booking> _bookings = [];
 
   void loadBookings() {

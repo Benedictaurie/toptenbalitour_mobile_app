@@ -23,3 +23,4 @@ class DashboardError extends DashboardState {
 
   const DashboardError(this.message);
 }
+//
