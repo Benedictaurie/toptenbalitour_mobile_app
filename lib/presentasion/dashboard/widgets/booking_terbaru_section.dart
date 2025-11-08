@@ -1,87 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:toptenbalitour_app/data/models/booking_model.dart';
-import 'package:toptenbalitour_app/presentasion/booking/pages/booking_list_page.dart';
 
 class BookingTerbaruSection extends StatelessWidget {
   final List<Booking> bookings;
 
-  const BookingTerbaruSection({super.key, required this.bookings}); //
+  const BookingTerbaruSection({super.key, required this.bookings});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: const EdgeInsets.all(16),
+      shadowColor: Colors.black.withOpacity(0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Judul Section
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Booking Terbaru',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2C3E50),
+                  ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => BookingListPage()),
-                    );
-                  },
-                  child: const Text('Lihat Semua'),
+                Icon(
+                  Icons.calendar_today_rounded,
+                  color: Colors.blueAccent,
+                  size: 22,
                 ),
               ],
             ),
+            const SizedBox(height: 12),
 
+            // Daftar booking atau pesan kosong
             if (bookings.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  'Tidak ada booking terbaru',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey),
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 30),
+                  child: Text(
+                    'Tidak ada booking terbaru',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
                 ),
               )
             else
-              ...bookings.map((booking) => _buildBookingItem(booking)).toList(),
+              Column(
+                children:
+                    bookings
+                        .take(3)
+                        .map((booking) => _buildBookingItem(context, booking))
+                        .toList(),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBookingItem(Booking booking) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 4),
-      leading: CircleAvatar(
-        backgroundColor: _getStatusColor(booking.bookingStatus),
-        child: Text(
-          booking.bookingCode.substring(2, 5),
-          style: const TextStyle(color: Colors.white, fontSize: 10),
-        ),
+  Widget _buildBookingItem(BuildContext context, Booking booking) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
       ),
-      title: Text(
-        booking.customerName,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('${booking.serviceType} - ${_formatTime(booking.tourDate)}'),
-          Text(
-            '${booking.participantCount} peserta • ${_formatDate(booking.tourDate)}',
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+        leading: CircleAvatar(
+          radius: 24,
+          backgroundColor: _getStatusColor(
+            booking.bookingStatus,
+          ).withOpacity(0.15),
+          child: Icon(
+            _getStatusIcon(booking.bookingStatus),
+            color: _getStatusColor(booking.bookingStatus),
+            size: 22,
           ),
-        ],
+        ),
+        title: Text(
+          booking.customerName,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: Colors.black87,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              '${booking.serviceType} • ${_formatDate(booking.tourDate)}',
+              style: TextStyle(color: Colors.grey[600], fontSize: 13),
+            ),
+            Text(
+              '${booking.participantCount} peserta',
+              style: TextStyle(color: Colors.grey[500], fontSize: 12),
+            ),
+          ],
+        ),
+        trailing: _buildStatusChip(booking.paymentStatus),
       ),
-      trailing: _buildStatusChip(booking.paymentStatus),
     );
   }
 
+  // Warna status booking
   Color _getStatusColor(String status) {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'confirmed':
         return Colors.green;
       case 'pending':
@@ -89,43 +122,61 @@ class BookingTerbaruSection extends StatelessWidget {
       case 'cancelled':
         return Colors.red;
       default:
-        return Colors.blue;
+        return Colors.blueAccent;
     }
   }
 
+  // Ikon untuk status
+  IconData _getStatusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case 'confirmed':
+        return Icons.check_circle_rounded;
+      case 'pending':
+        return Icons.hourglass_empty_rounded;
+      case 'cancelled':
+        return Icons.cancel_rounded;
+      default:
+        return Icons.info_rounded;
+    }
+  }
+
+  // Chip status pembayaran
   Widget _buildStatusChip(String paymentStatus) {
     Color chipColor;
+    Color textColor;
     String statusText;
 
-    switch (paymentStatus) {
+    switch (paymentStatus.toLowerCase()) {
       case 'paid':
         chipColor = Colors.green[100]!;
+        textColor = Colors.green[800]!;
         statusText = 'Paid';
         break;
       case 'pending':
         chipColor = Colors.orange[100]!;
+        textColor = Colors.orange[800]!;
         statusText = 'Pending';
         break;
       case 'cancelled':
         chipColor = Colors.red[100]!;
+        textColor = Colors.red[800]!;
         statusText = 'Cancelled';
         break;
       default:
-        chipColor = Colors.grey[100]!;
+        chipColor = Colors.grey[200]!;
+        textColor = Colors.grey[800]!;
         statusText = paymentStatus;
     }
 
     return Chip(
-      label: Text(statusText, style: const TextStyle(fontSize: 12)),
+      label: Text(statusText, style: TextStyle(fontSize: 12, color: textColor)),
       backgroundColor: chipColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       visualDensity: VisualDensity.compact,
     );
   }
 
-  String _formatTime(DateTime date) {
-    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-
+  // Format tanggal yang lebih natural
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);

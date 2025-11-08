@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:toptenbalitour_app/presentasion/booking/pages/booking_list_page.dart';
+import 'package:toptenbalitour_app/presentasion/setting/pages/setting_page.dart';
 
 class DashboardDrawer extends StatelessWidget {
   const DashboardDrawer({super.key});
@@ -8,11 +8,13 @@ class DashboardDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
+        // Ensure no extra padding at the top for the DrawerHeader
         padding: EdgeInsets.zero,
-        children: [
+        children: <Widget>[
+          // --- Drawer Header Section ---
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 43, 50, 100),
+              color: Color.fromARGB(255, 43, 50, 100), // Custom dark blue color
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -20,7 +22,11 @@ class DashboardDrawer extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 30,
-                  child: Icon(Icons.account_circle, size: 40, color: Color.fromARGB(255, 43, 50, 100)),
+                  child: Icon(
+                    Icons.account_circle,
+                    size: 40,
+                    color: Color.fromARGB(255, 43, 50, 100),
+                  ),
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -38,49 +44,32 @@ class DashboardDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.dashboard, color: Colors.green),
-            title: const Text('Dashboard'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.list_alt, color: Colors.blue),
-            title: const Text('Daftar Booking'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => BookingListPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.directions_car, color: Colors.orange),
-            title: const Text('Manajemen Driver'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(context, MaterialPageRoute(builder: (_) => DriverListPage()));
-            },
-          ),
-          const Divider(),
+
+          // --- Menu Items Section (No Divider) ---
           ListTile(
             leading: const Icon(Icons.settings, color: Colors.grey),
-            title: const Text('Pengaturan'),
+            title: const Text('Peraturan'),
             onTap: () {
-              // Navigate to settings
+              Navigator.pop(context); // Tutup drawer dulu
+              Future.delayed(const Duration(milliseconds: 250), () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingPage()),
+                );
+              });
             },
           ),
+
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Logout'),
             onTap: () {
               // Handle logout
+              Navigator.pop(context); // Close the drawer after tap
             },
           ),
         ],
       ),
     );
   }
-}//
+}

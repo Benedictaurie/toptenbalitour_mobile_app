@@ -4,6 +4,7 @@ import 'package:toptenbalitour_app/logic/booking/booking_cubit.dart';
 import 'package:toptenbalitour_app/logic/dashboard/dashboard_cubit.dart';
 import 'package:toptenbalitour_app/presentasion/booking/pages/booking_list_page.dart';
 import 'package:toptenbalitour_app/presentasion/dashboard/pages/dashboard_page.dart';
+import 'package:toptenbalitour_app/presentasion/driver/pages/driver_schedule.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         // ),//
       ],
       child: MaterialApp(
-        title: 'TopTen Bali Tour',
+        title: 'TOPTEN BALI TOUR',
         theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
         home: DashboardPage(),
         debugShowCheckedModeBanner: false,
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
         // Contoh routes untuk multiple pages
         routes: {
           '/bookings': (context) => BookingListPage(),
-          // '/drivers': (context) => DriverListPage(),
+          '/drivers': (context) => DriverSchedulePage(),
           // '/profile': (context) => ProfilePage(),
           // '/login': (context) => LoginPage(),
         },
