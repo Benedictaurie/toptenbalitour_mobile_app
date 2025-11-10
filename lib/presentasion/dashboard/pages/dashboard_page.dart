@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Logic
 import 'package:toptenbalitour_app/logic/booking/booking_cubit.dart';
 import 'package:toptenbalitour_app/logic/dashboard/dashboard_cubit.dart';
 import 'package:toptenbalitour_app/logic/dashboard/dashboard_state.dart';
+import 'package:toptenbalitour_app/logic/notification/notification_cubit.dart';
+
+// Widgets
 import 'package:toptenbalitour_app/presentasion/dashboard/widgets/dashboard_statistic.dart';
 import 'package:toptenbalitour_app/presentasion/dashboard/widgets/booking_terbaru_section.dart';
 import 'package:toptenbalitour_app/presentasion/dashboard/widgets/driver_aktif_section.dart';
+
+// Pages
 import 'package:toptenbalitour_app/presentasion/booking/pages/booking_list_page.dart';
 import 'package:toptenbalitour_app/presentasion/driver/pages/driver_schedule.dart';
 import 'package:toptenbalitour_app/presentasion/profile/pages/profile_page.dart';
+import 'package:toptenbalitour_app/presentasion/notification/pages/notif_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -25,7 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
     'TOPTEN BALI TOUR',
     'Daftar Booking',
     'Jadwal Driver',
-    'Profil Pengguna', 
+    'Profil Pengguna',
   ];
 
   @override
@@ -71,7 +79,7 @@ class _DashboardPageState extends State<DashboardPage> {
           _pageTitles[_selectedIndex],
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        centerTitle: _selectedIndex != 0, // Tengah untuk selain Dashboard
+        centerTitle: _selectedIndex != 0,
         backgroundColor: themeColor,
         foregroundColor: Colors.white,
         elevation: 2,
@@ -80,8 +88,15 @@ class _DashboardPageState extends State<DashboardPage> {
                 IconButton(
                   icon: const Icon(Icons.notifications_outlined),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Belum ada notifikasi.')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) =>
+                              NotificationCubit()..loadNotifications(),
+                          child: const NotificationPage(),
+                        ),
+                      ),
                     );
                   },
                 ),

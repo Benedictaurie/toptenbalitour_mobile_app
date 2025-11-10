@@ -116,7 +116,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
 
-                    const Spacer(),
+                    const SizedBox(height: 12),
 
                     // Tombol Logout
                     SizedBox(
@@ -125,37 +125,34 @@ class ProfilePage extends StatelessWidget {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder:
-                                (context) => AlertDialog(
-                                  title: const Text('Konfirmasi Logout'),
-                                  content: const Text(
-                                    'Apakah Anda yakin ingin keluar?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Batal'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        cubit.logout();
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Berhasil logout'),
-                                          ),
-                                        );
-                                        // Navigator.pushReplacementNamed(context, '/login');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                      ),
-                                      child: const Text('Logout'),
-                                    ),
-                                  ],
+                            builder: (context) => AlertDialog(
+                              title: const Text('Konfirmasi Logout'),
+                              content: const Text(
+                                'Apakah Anda yakin ingin keluar?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Batal'),
                                 ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    cubit.logout();
+                                    // Arahkan ke halaman login & hapus semua route
+                                    Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      '/login', // route login
+                                      (route) => false,
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  child: const Text('Logout'),
+                                ),
+                              ],
+                            ),
                           );
                         },
                         icon: const Icon(Icons.logout, color: Colors.red),

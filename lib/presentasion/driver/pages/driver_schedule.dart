@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toptenbalitour_app/data/repositories/driver_repository.dart';
 import 'package:toptenbalitour_app/logic/driver/driver_cubit.dart';
 import 'package:toptenbalitour_app/logic/driver/driver_state.dart';
+import 'driver_detail_page.dart';
 
 class DriverSchedulePage extends StatelessWidget {
   const DriverSchedulePage({super.key});
@@ -10,10 +11,15 @@ class DriverSchedulePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (_) => DriverCubit(repository: DriverRepository())..fetchDrivers(),
+      create: (_) => DriverCubit(repository: DriverRepository())..fetchDrivers(),
       child: Scaffold(
-        backgroundColor: Colors.white, // ✅ Latar belakang putih
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text("Daftar Driver"),
+          centerTitle: true,
+          backgroundColor: const Color(0xFF2B3264),
+          foregroundColor: Colors.white,
+        ),
         body: SafeArea(
           child: BlocBuilder<DriverCubit, DriverState>(
             builder: (context, state) {
@@ -48,18 +54,15 @@ class DriverSchedulePage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final d = drivers[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      elevation: 3,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(12),
                         leading: CircleAvatar(
-                          radius: 24,
+                          radius: 26,
                           backgroundColor: Colors.blue.shade100,
                           child: const Icon(Icons.person, color: Colors.blue),
                         ),
@@ -70,38 +73,16 @@ class DriverSchedulePage extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("📞 ${d.phone}"),
-                            Text("🚗 ${d.vehicleType} (${d.licensePlate})"),
-                            Text(
-                              "🟢 Status: ${d.status}",
-                              style: TextStyle(
-                                color:
-                                    d.status == 'active'
-                                        ? Colors.green
-                                        : (d.status == 'on-duty'
-                                            ? Colors.orange
-                                            : Colors.grey),
-                                fontWeight: FontWeight.w500,
-                              ),
+                        subtitle: Text("Status: ${d.status}"),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DriverDetailPage(driver: d),
                             ),
-                          ],
-                        ),
-                        trailing: Icon(
-                          d.status == 'active'
-                              ? Icons.check_circle
-                              : d.status == 'on-duty'
-                              ? Icons.access_time
-                              : Icons.remove_circle,
-                          color:
-                              d.status == 'active'
-                                  ? Colors.green
-                                  : (d.status == 'on-duty'
-                                      ? Colors.orange
-                                      : Colors.grey),
-                        ),
+                          );
+                        },
                       ),
                     );
                   },
@@ -113,14 +94,13 @@ class DriverSchedulePage extends StatelessWidget {
           ),
         ),
         floatingActionButton: Builder(
-          builder:
-              (context) => FloatingActionButton(
-                backgroundColor: const Color.fromARGB(255, 43, 50, 100),
-                onPressed: () {
-                  context.read<DriverCubit>().fetchDrivers();
-                },
-                child: const Icon(Icons.refresh, color: Colors.white),
-              ),
+          builder: (context) => FloatingActionButton(
+            backgroundColor: const Color(0xFF2B3264),
+            onPressed: () {
+              context.read<DriverCubit>().fetchDrivers();
+            },
+            child: const Icon(Icons.refresh, color: Colors.white),
+          ),
         ),
       ),
     );

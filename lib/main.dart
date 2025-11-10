@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toptenbalitour_app/logic/booking/booking_cubit.dart';
 import 'package:toptenbalitour_app/logic/dashboard/dashboard_cubit.dart';
+import 'package:toptenbalitour_app/presentasion/auth/pages/login_page.dart';
 import 'package:toptenbalitour_app/presentasion/booking/pages/booking_list_page.dart';
 import 'package:toptenbalitour_app/presentasion/dashboard/pages/dashboard_page.dart';
 import 'package:toptenbalitour_app/presentasion/driver/pages/driver_schedule.dart';
+import 'package:toptenbalitour_app/presentasion/profile/pages/profile_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -40,15 +42,15 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'TOPTEN BALI TOUR',
         theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
-        home: DashboardPage(),
+        home: LoginPage(),
         debugShowCheckedModeBanner: false,
 
         // Contoh routes untuk multiple pages
         routes: {
           '/bookings': (context) => BookingListPage(),
           '/drivers': (context) => DriverSchedulePage(),
-          // '/profile': (context) => ProfilePage(),
-          // '/login': (context) => LoginPage(),
+          '/profile': (context) => ProfilePage(),
+          '/login': (context) => LoginPage(),
         },
 
         // Atau menggunakan onGenerateRoute untuk routing yang lebih kompleks

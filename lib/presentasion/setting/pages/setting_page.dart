@@ -34,14 +34,6 @@ class SettingPage extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 children: [
                   SwitchListTile(
-                    title: const Text('Mode Gelap'),
-                    value: state.isDarkMode,
-                    onChanged: cubit.toggleDarkMode,
-                    secondary: const Icon(Icons.dark_mode_outlined),
-                  ),
-                  const Divider(),
-
-                  SwitchListTile(
                     title: const Text('Notifikasi'),
                     value: state.notificationEnabled,
                     onChanged: cubit.toggleNotification,
