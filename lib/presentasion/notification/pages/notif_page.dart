@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:toptenbalitour_app/logic/notification/notification_state.dart';
+import 'package:toptenbalitour_app/data/repositories/notification_repository.dart';
 import 'package:toptenbalitour_app/logic/notification/notification_cubit.dart';
+import 'package:toptenbalitour_app/logic/notification/notification_state.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -11,7 +12,9 @@ class NotificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) {
-        final cubit = NotificationCubit();
+        final cubit = NotificationCubit(
+          notificationRepository: NotificationRepository(), // <-- gunakan repository
+        );
         cubit.loadNotifications();
         return cubit;
       },
@@ -46,7 +49,9 @@ class NotificationPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state.notifications.isEmpty) {
+            final notifications = state.notifications ?? [];
+
+            if (notifications.isEmpty) {
               return const Center(
                 child: Text(
                   'Tidak ada notifikasi.',
@@ -57,11 +62,10 @@ class NotificationPage extends StatelessWidget {
 
             return ListView.separated(
               padding: const EdgeInsets.all(12),
-              itemCount: state.notifications.length,
-              separatorBuilder: (context, index) =>
-                  const SizedBox(height: 8),
+              itemCount: notifications.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                final notif = state.notifications[index];
+                final notif = notifications[index];
                 return Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -73,13 +77,15 @@ class NotificationPage extends StatelessWidget {
                       color: Color(0xFF2B3264),
                     ),
                     title: Text(
-                      notif['title']!,
+                      notif['title'] ?? '',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(notif['description']!),
+                    subtitle: Text(notif['description'] ?? ''),
                     trailing: Text(
-                      DateFormat('dd MMM yyyy, HH:mm')
-                          .format(DateTime.parse(notif['date']!)),
+                      notif['date'] != null
+                          ? DateFormat('dd MMM yyyy, HH:mm')
+                              .format(DateTime.parse(notif['date']!))
+                          : '',
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.grey,

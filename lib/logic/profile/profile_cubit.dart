@@ -1,32 +1,30 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'profile_state.dart';
+import 'package:toptenbalitour_app/data/repositories/profile_repository.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit() : super(const ProfileState());
+  final ProfileRepository repository;
 
-  /// Simulasi mengambil data profil (misalnya dari API)
-  void loadProfile() {
+  ProfileCubit({required this.repository}) : super(const ProfileState());
+
+  Future<void> loadProfile(String userId) async {
     emit(state.copyWith(isLoading: true));
-    Future.delayed(const Duration(milliseconds: 800), () {
+    try {
+      final profile = await repository.fetchProfile(userId);
+
       emit(state.copyWith(
-        name: "Admin",
-        email: "admin@example.com",
-        phone: "+62 812 3456 7890",
-        address: "Denpasar, Bali",
-        role: "Administrator",
+        name: profile.name,
+        email: profile.email,
+        phone: profile.phone,
+        address: profile.address,
+        role: profile.role,
+        imagePath: profile.imagePath ?? state.imagePath,
         isLoading: false,
       ));
-    });
-  }
-
-  /// Contoh fungsi update profil
-  void updateName(String newName) {
-    emit(state.copyWith(name: newName));
-  }
-
-  /// Contoh fungsi logout
-  void logout() {
-    // bisa tambahkan logika clear data di sini
-    emit(const ProfileState());
+    } catch (e) {
+      emit(state.copyWith(isLoading: false));
+      // bisa log error atau emit state error jika mau
+      // debugPrint('Gagal load profile: $e');
+    }
   }
 }

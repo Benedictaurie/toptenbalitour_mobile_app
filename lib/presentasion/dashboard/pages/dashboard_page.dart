@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Logic
-import 'package:toptenbalitour_app/logic/booking/booking_cubit.dart';
+import 'package:toptenbalitour_app/data/repositories/booking_repository.dart';
+import 'package:toptenbalitour_app/data/repositories/notification_repository.dart';
 import 'package:toptenbalitour_app/logic/dashboard/dashboard_cubit.dart';
 import 'package:toptenbalitour_app/logic/dashboard/dashboard_state.dart';
-import 'package:toptenbalitour_app/logic/notification/notification_cubit.dart';
 
-// Widgets
+// Pages & Widgets
 import 'package:toptenbalitour_app/presentasion/dashboard/widgets/dashboard_statistic.dart';
 import 'package:toptenbalitour_app/presentasion/dashboard/widgets/booking_terbaru_section.dart';
 import 'package:toptenbalitour_app/presentasion/dashboard/widgets/driver_aktif_section.dart';
-
-// Pages
 import 'package:toptenbalitour_app/presentasion/booking/pages/booking_list_page.dart';
 import 'package:toptenbalitour_app/presentasion/driver/pages/driver_schedule.dart';
 import 'package:toptenbalitour_app/presentasion/profile/pages/profile_page.dart';
 import 'package:toptenbalitour_app/presentasion/notification/pages/notif_page.dart';
+import 'package:toptenbalitour_app/logic/notification/notification_cubit.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -27,7 +26,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
-  DashboardCubit? _dashboardCubit;
+  late DashboardCubit _dashboardCubit;
 
   final List<String> _pageTitles = [
     'TOPTEN BALI TOUR',
@@ -39,13 +38,18 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+
+    _dashboardCubit = DashboardCubit(bookingRepository: BookingRepository());
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final bookingCubit = context.read<BookingCubit>();
-      setState(() {
-        _dashboardCubit = DashboardCubit(bookingCubit: bookingCubit);
-        _dashboardCubit!.loadDashboardData();
-      });
+      _dashboardCubit.loadDashboardData();
     });
+  }
+
+  @override
+  void dispose() {
+    _dashboardCubit.close();
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
@@ -58,18 +62,17 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final themeColor = const Color(0xFF2B3264);
 
-    if (_dashboardCubit == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     final List<Widget> widgetOptions = <Widget>[
       BlocProvider.value(
-        value: _dashboardCubit!,
+        value: _dashboardCubit,
         child: const DashboardContent(),
       ),
       const BookingListPage(key: PageStorageKey('Booking')),
       const DriverSchedulePage(key: PageStorageKey('Driver')),
-      const ProfilePage(key: PageStorageKey('Profile')),
+      ProfilePage(
+        key: const PageStorageKey('Profile'),
+        userId: "123",
+      ),
     ];
 
     return Scaffold(
@@ -83,26 +86,31 @@ class _DashboardPageState extends State<DashboardPage> {
         backgroundColor: themeColor,
         foregroundColor: Colors.white,
         elevation: 2,
-        actions: _selectedIndex == 0
-            ? [
-                IconButton(
-                  icon: const Icon(Icons.notifications_outlined),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BlocProvider(
-                          create: (_) =>
-                              NotificationCubit()..loadNotifications(),
-                          child: const NotificationPage(),
+        actions:
+            _selectedIndex == 0
+                ? [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => BlocProvider(
+                                create:
+                                    (_) => NotificationCubit(
+                                      notificationRepository:
+                                          NotificationRepository(),
+                                    )..loadNotifications(),
+                                child: const NotificationPage(),
+                              ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-              ]
-            : null,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                ]
+                : null,
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
@@ -161,7 +169,7 @@ class DashboardContent extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   state.message,
-                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  style: const TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -171,12 +179,6 @@ class DashboardContent extends StatelessWidget {
                   },
                   icon: const Icon(Icons.refresh),
                   label: const Text('Coba Lagi'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2B3264),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -202,10 +204,7 @@ class DashboardContent extends StatelessWidget {
         }
 
         return const Center(
-          child: Text(
-            'Tekan tombol refresh untuk memuat data.',
-            style: TextStyle(fontSize: 15, color: Colors.grey),
-          ),
+          child: Text('Tekan tombol refresh untuk memuat data.'),
         );
       },
     );

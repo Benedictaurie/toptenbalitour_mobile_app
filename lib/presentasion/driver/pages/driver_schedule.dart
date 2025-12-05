@@ -14,12 +14,6 @@ class DriverSchedulePage extends StatelessWidget {
       create: (_) => DriverCubit(repository: DriverRepository())..fetchDrivers(),
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text("Daftar Driver"),
-          centerTitle: true,
-          backgroundColor: const Color(0xFF2B3264),
-          foregroundColor: Colors.white,
-        ),
         body: SafeArea(
           child: BlocBuilder<DriverCubit, DriverState>(
             builder: (context, state) {

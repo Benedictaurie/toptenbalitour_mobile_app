@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toptenbalitour_app/logic/profile/profile_cubit.dart';
 import 'package:toptenbalitour_app/logic/profile/profile_state.dart';
+import 'package:toptenbalitour_app/data/repositories/profile_repository.dart';
 import 'package:toptenbalitour_app/presentasion/setting/pages/setting_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final String userId;
+
+  const ProfilePage({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProfileCubit()..loadProfile(),
+      create: (_) => ProfileCubit(repository: ProfileRepository())
+        ..loadProfile(userId), // kirim userId untuk fetch API
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F6FA),
         body: SafeArea(
@@ -32,7 +36,9 @@ class ProfilePage extends StatelessWidget {
                     CircleAvatar(
                       radius: 55,
                       backgroundColor: Colors.white,
-                      backgroundImage: AssetImage(state.imagePath),
+                      backgroundImage: state.imagePath.startsWith('http')
+                          ? NetworkImage(state.imagePath)
+                          : AssetImage(state.imagePath) as ImageProvider,
                     ),
                     const SizedBox(height: 16),
 
@@ -138,8 +144,7 @@ class ProfilePage extends StatelessWidget {
                                 ElevatedButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    cubit.logout();
-                                    // Arahkan ke halaman login & hapus semua route
+                                    // Logout logic (bisa diimplementasikan di cubit)
                                     Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       '/login', // route login

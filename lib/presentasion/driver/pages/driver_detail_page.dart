@@ -9,12 +9,6 @@ class DriverDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
-      appBar: AppBar(
-        title: const Text("Detail Driver"),
-        backgroundColor: const Color(0xFF2B3264),
-        foregroundColor: Colors.white,
-        centerTitle: true,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
