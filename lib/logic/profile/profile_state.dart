@@ -3,50 +3,60 @@ import 'package:equatable/equatable.dart';
 class ProfileState extends Equatable {
   final String name;
   final String email;
-  final String phone;
+  final String phoneNumber;
   final String address;
   final String role;
-  final String imagePath;
+  final String? profilePicture;
   final bool isLoading;
+  final String? errorMessage;
+  final bool isUnauthorized; // ✅ TAMBAHKAN
 
   const ProfileState({
     this.name = '',
     this.email = '',
-    this.phone = '',
+    this.phoneNumber = '',
     this.address = '',
-    this.role = '',
-    this.imagePath = 'assets/appimages/No_profile_picture.jpg',
+    this.role = 'user',
+    this.profilePicture,
     this.isLoading = false,
+    this.errorMessage,
+    this.isUnauthorized = false, // ✅ TAMBAHKAN
   });
 
   ProfileState copyWith({
     String? name,
     String? email,
-    String? phone,
+    String? phoneNumber,
     String? address,
     String? role,
-    String? imagePath,
+    String? profilePicture,
     bool? isLoading,
+    String? errorMessage,
+    bool? isUnauthorized, // ✅ TAMBAHKAN
   }) {
     return ProfileState(
       name: name ?? this.name,
       email: email ?? this.email,
-      phone: phone ?? this.phone,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       address: address ?? this.address,
       role: role ?? this.role,
-      imagePath: imagePath ?? this.imagePath,
+      profilePicture: profilePicture ?? this.profilePicture,
       isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+      isUnauthorized: isUnauthorized ?? this.isUnauthorized, // ✅ TAMBAHKAN
     );
   }
 
   @override
   List<Object?> get props => [
-    name,
-    email,
-    phone,
-    address,
-    role,
-    imagePath,
-    isLoading,
-  ];
+        name,
+        email,
+        phoneNumber,
+        address,
+        role,
+        profilePicture,
+        isLoading,
+        errorMessage,
+        isUnauthorized, // ✅ TAMBAHKAN
+      ];
 }

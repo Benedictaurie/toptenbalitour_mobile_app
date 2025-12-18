@@ -39,7 +39,7 @@ class BookingTerbaruSection extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Daftar booking atau pesan kosong
+            // Jika data kosong
             if (bookings.isEmpty)
               const Center(
                 child: Padding(
@@ -52,11 +52,11 @@ class BookingTerbaruSection extends StatelessWidget {
               )
             else
               Column(
-                children:
-                    bookings
-                        .take(3)
-                        .map((booking) => _buildBookingItem(context, booking))
-                        .toList(),
+                children: bookings
+                    .take(3)
+                    .map((booking) =>
+                        _buildBookingItem(context, booking))
+                    .toList(),
               ),
           ],
         ),
@@ -73,20 +73,20 @@ class BookingTerbaruSection extends StatelessWidget {
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         leading: CircleAvatar(
           radius: 24,
-          backgroundColor: _getStatusColor(
-            booking.bookingStatus,
-          ).withOpacity(0.15),
+          backgroundColor:
+              _getStatusColor(booking.status).withOpacity(0.15),
           child: Icon(
-            _getStatusIcon(booking.bookingStatus),
-            color: _getStatusColor(booking.bookingStatus),
+            _getStatusIcon(booking.status),
+            color: _getStatusColor(booking.status),
             size: 22,
           ),
         ),
         title: Text(
-          booking.customerName,
+          booking.bookingCode,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,
@@ -98,16 +98,18 @@ class BookingTerbaruSection extends StatelessWidget {
           children: [
             const SizedBox(height: 4),
             Text(
-              '${booking.serviceType} • ${_formatDate(booking.tourDate)}',
+              'Mulai: ${_formatDate(booking.startDate)}',
               style: TextStyle(color: Colors.grey[600], fontSize: 13),
             ),
             Text(
-              '${booking.participantCount} peserta',
+              '${booking.quantity} peserta',
               style: TextStyle(color: Colors.grey[500], fontSize: 12),
             ),
           ],
         ),
-        trailing: _buildStatusChip(booking.paymentStatus),
+
+        // trailing status chip
+        trailing: _buildStatusChip(booking.status),
       ),
     );
   }
@@ -126,7 +128,7 @@ class BookingTerbaruSection extends StatelessWidget {
     }
   }
 
-  // Ikon untuk status
+  // Ikon status
   IconData _getStatusIcon(String status) {
     switch (status.toLowerCase()) {
       case 'confirmed':
@@ -140,43 +142,41 @@ class BookingTerbaruSection extends StatelessWidget {
     }
   }
 
-  // Chip status pembayaran
-  Widget _buildStatusChip(String paymentStatus) {
+  // Chip status booking (bukan payment)
+  Widget _buildStatusChip(String status) {
     Color chipColor;
     Color textColor;
-    String statusText;
 
-    switch (paymentStatus.toLowerCase()) {
-      case 'paid':
+    switch (status.toLowerCase()) {
+      case 'confirmed':
         chipColor = Colors.green[100]!;
         textColor = Colors.green[800]!;
-        statusText = 'Paid';
         break;
       case 'pending':
         chipColor = Colors.orange[100]!;
         textColor = Colors.orange[800]!;
-        statusText = 'Pending';
         break;
       case 'cancelled':
         chipColor = Colors.red[100]!;
         textColor = Colors.red[800]!;
-        statusText = 'Cancelled';
         break;
       default:
         chipColor = Colors.grey[200]!;
         textColor = Colors.grey[800]!;
-        statusText = paymentStatus;
     }
 
     return Chip(
-      label: Text(statusText, style: TextStyle(fontSize: 12, color: textColor)),
+      label: Text(
+        status.toUpperCase(),
+        style: TextStyle(fontSize: 12, color: textColor),
+      ),
       backgroundColor: chipColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       visualDensity: VisualDensity.compact,
     );
   }
 
-  // Format tanggal yang lebih natural
+  // Format tanggal natural
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);

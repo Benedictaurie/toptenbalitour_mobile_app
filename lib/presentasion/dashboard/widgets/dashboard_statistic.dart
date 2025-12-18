@@ -10,9 +10,9 @@ class DashboardStatistics extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Jika layar kecil, tampil dua baris
         final isSmallScreen = constraints.maxWidth < 400;
 
+        // Hanya tampilkan Booking Hari Ini & Peserta (tanpa driver)
         if (isSmallScreen) {
           return Column(
             children: [
@@ -37,18 +37,11 @@ class DashboardStatistics extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              _buildStatCard(
-                'Driver Aktif',
-                summary.driverAktifHariIni.toString(),
-                Colors.orange,
-                Icons.directions_car,
-              ),
             ],
           );
         }
 
-        // Jika layar cukup lebar → tampil 3 kolom sejajar
+        // Layar lebar → 2 kolom sejajar
         return Row(
           children: [
             Expanded(
@@ -68,15 +61,6 @@ class DashboardStatistics extends StatelessWidget {
                 Icons.people,
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildStatCard(
-                'Driver Aktif',
-                summary.driverAktifHariIni.toString(),
-                Colors.orange,
-                Icons.directions_car,
-              ),
-            ),
           ],
         );
       },
@@ -90,41 +74,42 @@ class DashboardStatistics extends StatelessWidget {
     IconData icon,
   ) {
     return Card(
-      color: Colors.white, // 🔹 background putih
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
       shadowColor: Colors.black26,
-      child: Container(
-        height: 120, // 🔹 semua card tinggi sama
-        padding: const EdgeInsets.all(12),
-        child: Center(
-          child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, // isi di tengah vertikal
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(icon, color: color, size: 30),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+      child: SizedBox(
+        height: 120,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(icon, color: color, size: 30),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: color, // angka tetap pakai warna tema
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

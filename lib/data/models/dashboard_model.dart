@@ -1,19 +1,19 @@
-import 'package:toptenbalitour_app/data/models/booking_model.dart';
+import 'booking_model.dart';
 
 class Dashboard {
   final int totalBookingHariIni;
   final int totalPesertaHariIni;
-  final int driverAktifHariIni;
   final int bookingPerluKonfirmasi;
   final List<Booking> bookingTerbaru;
-  //final List<JadwalDriver> jadwalDriverHariIni;//
+  final int totalBookingBulanIni;
+  final double totalRevenueBulanIni;
 
   Dashboard({
     required this.totalBookingHariIni,
     required this.totalPesertaHariIni,
-    required this.driverAktifHariIni,
     required this.bookingPerluKonfirmasi,
     required this.bookingTerbaru,
-    // required this.jadwalDriverHariIni,//
+    required this.totalBookingBulanIni,
+    required this.totalRevenueBulanIni,
   });
 }

@@ -1,80 +1,107 @@
-import 'package:flutter/foundation.dart';
+import 'package:equatable/equatable.dart';
 import 'package:toptenbalitour_app/data/models/booking_model.dart';
 
-abstract class BookingState {
-  const BookingState();
+class BookingState extends Equatable {
+  final List<Booking> bookings;
+  final bool isLoading;
+  final String? errorMessage;
+  final bool isUnauthorized; // ✅ Flag untuk handle 401 error
+  final Map<String, dynamic>? pagination; // ✅ Data pagination
+  final Map<String, dynamic>? statistics; // ✅ Statistik booking
+  final String? actionSuccessMessage; // ✅ Pesan sukses approve/reject
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other.runtimeType == runtimeType;
-    // membandingkan tipe objek melalui runtimeType, yaitu dua objek dianggap sama jika dari tipe class yang sama.
+  const BookingState({
+    this.bookings = const [],
+    this.isLoading = false,
+    this.errorMessage,
+    this.isUnauthorized = false,
+    this.pagination,
+    this.statistics,
+    this.actionSuccessMessage, // ✅
+  });
+
+  // ✅ Initial state
+  factory BookingState.initial() {
+    return const BookingState();
   }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
-}
-
-class BookingInitial extends BookingState {
-  //Status awal ketika belum ada aksi booking.
-  const BookingInitial();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is BookingInitial; //membandingkan tipe class
+  // ✅ Loading state
+  factory BookingState.loading() {
+    return const BookingState(isLoading: true);
   }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
-}
-
-class BookingLoading extends BookingState {
-  //Menandakan proses loading data booking sedang berlangsung.
-  const BookingLoading();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) || other is BookingLoading;
+  // ✅ Loaded state
+  factory BookingState.loaded({
+    required List<Booking> bookings,
+    Map<String, dynamic>? pagination,
+    Map<String, dynamic>? statistics,
+  }) {
+    return BookingState(
+      bookings: bookings,
+      isLoading: false,
+      pagination: pagination,
+      statistics: statistics,
+    );
   }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
-}
-
-class BookingLoaded extends BookingState {
-  final List<Booking>
-  bookings; //State saat data booking berhasil dimuat, membawa sebuah list bookings
-
-  const BookingLoaded(this.bookings);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! BookingLoaded) return false;
-    return listEquals(
-      bookings,
-      other.bookings,
-    ); //listEquals dipakai untuk membandingkan isi list bookings elemen demi elemen.
+  // ✅ Error state
+  factory BookingState.error(String message) {
+    return BookingState(
+      isLoading: false,
+      errorMessage: message,
+    );
   }
 
-  @override
-  int get hashCode => bookings.hashCode;
-}
-
-class BookingError extends BookingState {
-  //Status jika terjadi error saat memuat data booking
-  final String message;
-
-  const BookingError(this.message);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! BookingError) return false;
-    return message == other.message;
+  // ✅ Unauthorized state (401)
+  factory BookingState.unauthorized(String message) {
+    return BookingState(
+      isLoading: false,
+      errorMessage: message,
+      isUnauthorized: true,
+    );
   }
 
+  // ✅ Copy with method untuk update state
+  BookingState copyWith({
+    List<Booking>? bookings,
+    bool? isLoading,
+    String? errorMessage,
+    bool? isUnauthorized,
+    Map<String, dynamic>? pagination,
+    Map<String, dynamic>? statistics,
+    String? actionSuccessMessage, // ✅ Tambahkan di copyWith
+  }) {
+    return BookingState(
+      bookings: bookings ?? this.bookings,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+      isUnauthorized: isUnauthorized ?? this.isUnauthorized,
+      pagination: pagination ?? this.pagination,
+      statistics: statistics ?? this.statistics,
+      actionSuccessMessage: actionSuccessMessage ?? this.actionSuccessMessage,
+    );
+  }
+
+  // ✅ Helper getters
+  bool get hasError => errorMessage != null;
+  bool get hasData => bookings.isNotEmpty;
+  bool get isEmpty => bookings.isEmpty && !isLoading;
+
   @override
-  int get hashCode => message.hashCode;
+  List<Object?> get props => [
+        bookings,
+        isLoading,
+        errorMessage,
+        isUnauthorized,
+        pagination,
+        statistics,
+        actionSuccessMessage,
+      ];
+
+  @override
+  String toString() {
+    return 'BookingState(bookings: ${bookings.length}, isLoading: $isLoading, '
+        'errorMessage: $errorMessage, isUnauthorized: $isUnauthorized, '
+        'actionSuccessMessage: $actionSuccessMessage)';
+  }
 }
-//

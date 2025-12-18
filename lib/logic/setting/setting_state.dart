@@ -1,34 +1,28 @@
-class SettingState {
-  final bool isLoading;
-  final bool isDarkMode;
+import 'package:equatable/equatable.dart';
+
+class SettingState extends Equatable {
   final bool notificationEnabled;
   final String language;
+  final bool isLoading;
 
-  SettingState({
-    required this.isLoading,
-    required this.isDarkMode,
-    required this.notificationEnabled,
-    required this.language,
+  const SettingState({
+    this.notificationEnabled = true,
+    this.language = 'Indonesia',
+    this.isLoading = false,
   });
 
-  factory SettingState.initial() => SettingState(
-        isLoading: false,
-        isDarkMode: false,
-        notificationEnabled: true,
-        language: 'Indonesia',
-      );
-
   SettingState copyWith({
-    bool? isLoading,
-    bool? isDarkMode,
     bool? notificationEnabled,
     String? language,
+    bool? isLoading,
   }) {
     return SettingState(
-      isLoading: isLoading ?? this.isLoading,
-      isDarkMode: isDarkMode ?? this.isDarkMode,
       notificationEnabled: notificationEnabled ?? this.notificationEnabled,
       language: language ?? this.language,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
+
+  @override
+  List<Object?> get props => [notificationEnabled, language, isLoading];
 }

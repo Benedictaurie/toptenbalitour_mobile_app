@@ -4,13 +4,9 @@ abstract class DashboardState {
   const DashboardState();
 }
 
-class DashboardInitial extends DashboardState {
-  const DashboardInitial();
-}
+class DashboardInitial extends DashboardState {}
 
-class DashboardLoading extends DashboardState {
-  const DashboardLoading();
-}
+class DashboardLoading extends DashboardState {}
 
 class DashboardLoaded extends DashboardState {
   final Dashboard summary;
@@ -23,4 +19,10 @@ class DashboardError extends DashboardState {
 
   const DashboardError(this.message);
 }
-//
+
+// ✅ TAMBAHKAN: State untuk handle unauthorized (401)
+class DashboardUnauthorized extends DashboardState {
+  final String message;
+
+  const DashboardUnauthorized(this.message);
+}
