@@ -160,8 +160,9 @@ class BookingRepository {
     throw Exception('Gagal membatalkan booking');
   }
 
-  /// 🔹 Update booking status (approve / reject)
-  Future<Booking> updateBookingStatus(String bookingId, String status) async {
+  /// ✅ HANYA PERBAIKAN: Ubah parameter dari String ke int
+  /// URL tetap menggunakan /admin/admin/bookings
+  Future<Booking> updateBookingStatus(int bookingId, String status) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
     if (token == null || token.isEmpty) {
@@ -175,7 +176,7 @@ class BookingRepository {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({'status': status}), // status = "approved" / "rejected"
+      body: jsonEncode({'status': status}),
     );
 
     if (response.statusCode == 200) {

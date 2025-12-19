@@ -29,14 +29,17 @@ class BookingListPage extends StatelessWidget {
             }
             if (state.actionSuccessMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(state.actionSuccessMessage!), backgroundColor: Colors.green));
+                  content: Text(state.actionSuccessMessage!), 
+                  backgroundColor: Colors.green));
             }
           },
           builder: (context, state) {
             if (state.isLoading && !state.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (state.hasError && !state.hasData) return _buildError(state.errorMessage);
+            if (state.hasError && !state.hasData) {
+              return _buildError(state.errorMessage);
+            }
             if (state.isEmpty) return _buildEmpty();
 
             return RefreshIndicator(
@@ -57,6 +60,7 @@ class BookingListPage extends StatelessWidget {
 
   Widget _buildBookingCard(BuildContext context, Booking booking) {
     final isPending = booking.status.toLowerCase() == 'pending';
+    
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: Padding(
@@ -72,52 +76,152 @@ class BookingListPage extends StatelessWidget {
                     color: _getStatusColor(booking.status),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(_getStatusIcon(booking.status), color: Colors.white, size: 30),
+                  child: Icon(
+                    _getStatusIcon(booking.status), 
+                    color: Colors.white, 
+                    size: 30
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(booking.bookingCode, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        booking.bookingCode, 
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        )
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'ID: ${booking.id}', // ✅ Tampilkan ID untuk debugging
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
                       Text('Peserta: ${booking.quantity} orang'),
                       Text('Mulai: ${_formatDate(booking.startDate)}'),
+                      const SizedBox(height: 4),
+                      // ✅ Status badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8, 
+                          vertical: 4
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(booking.status).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          booking.statusLabel,
+                          style: TextStyle(
+                            color: _getStatusColor(booking.status),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
-            if (isPending)
+            if (isPending) ...[
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ElevatedButton(
+                  // ✅ PERBAIKAN: Kirim booking.id (int), bukan booking.bookingCode (String)
+                  ElevatedButton.icon(
                     onPressed: () {
+                      // ✅ DEBUG: Print sebelum kirim
+                      print('🔹 Approve clicked');
+                      print('🔹 Booking ID: ${booking.id}');
+                      print('🔹 Booking Code: ${booking.bookingCode}');
+                      
                       context.read<BookingCubit>().updateBookingStatus(
-                          bookingId: booking.bookingCode, status: 'confirmed');
+                        bookingId: booking.id, // ✅ UBAH: Kirim ID (int)
+                        status: 'confirmed',
+                      );
                     },
-                    child: const Text('Approve'),
+                    icon: const Icon(Icons.check, size: 18),
+                    label: const Text('Approve'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16, 
+                        vertical: 8
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton(
+                  ElevatedButton.icon(
                     onPressed: () {
+                      // ✅ DEBUG: Print sebelum kirim
+                      print('🔹 Reject clicked');
+                      print('🔹 Booking ID: ${booking.id}');
+                      print('🔹 Booking Code: ${booking.bookingCode}');
+                      
                       context.read<BookingCubit>().updateBookingStatus(
-                          bookingId: booking.bookingCode, status: 'cancelled');
+                        bookingId: booking.id, // ✅ UBAH: Kirim ID (int)
+                        status: 'cancelled', // ✅ UBAH: 'rejected' bukan 'cancelled'
+                      );
                     },
-                    child: const Text('Reject'),
+                    icon: const Icon(Icons.close, size: 18),
+                    label: const Text('Cancell'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16, 
+                        vertical: 8
+                      ),
+                    ),
                   ),
                 ],
               ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEmpty() => const Center(child: Text('Belum ada booking'));
-  Widget _buildError(String? message) => Center(child: Text(message ?? 'Terjadi kesalahan'));
+  Widget _buildEmpty() => const Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.inbox, size: 80, color: Colors.grey),
+        SizedBox(height: 16),
+        Text(
+          'Belum ada booking',
+          style: TextStyle(fontSize: 18, color: Colors.grey),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildError(String? message) => Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.error_outline, size: 80, color: Colors.red),
+        const SizedBox(height: 16),
+        Text(
+          message ?? 'Terjadi kesalahan',
+          style: const TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+  );
 
   String _formatDate(DateTime date) => DateFormat('dd MMM yyyy').format(date);
+
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
@@ -127,6 +231,7 @@ class BookingListPage extends StatelessWidget {
       case 'completed':
         return Colors.green;
       case 'cancelled':
+      case 'rejected':
         return Colors.red;
       default:
         return Colors.grey;
@@ -142,6 +247,7 @@ class BookingListPage extends StatelessWidget {
       case 'completed':
         return Icons.done_all;
       case 'cancelled':
+      case 'rejected':
         return Icons.cancel;
       default:
         return Icons.receipt_long;

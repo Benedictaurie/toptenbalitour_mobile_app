@@ -14,9 +14,14 @@ class BookingCubit extends Cubit<BookingState> {
     try {
       final bookings = await repository.fetchBookings();
 
+      print('📦 Loaded ${bookings.length} bookings');
+      for (var booking in bookings) {
+        print('  - ID: ${booking.id}, Code: ${booking.bookingCode}, Status: ${booking.status}');
+      }
+
       emit(BookingState.loaded(bookings: bookings));
     } catch (e) {
-      print('Error loading bookings: $e');
+      print('❌ Error loading bookings: $e');
 
       if (e.toString().contains('Sesi telah berakhir') ||
           e.toString().contains('Token tidak ditemukan') ||
@@ -61,7 +66,7 @@ class BookingCubit extends Cubit<BookingState> {
         statistics: result['statistics'],
       ));
     } catch (e) {
-      print('Error loading bookings with filters: $e');
+      print('❌ Error loading bookings with filters: $e');
 
       if (e.toString().contains('Sesi telah berakhir') ||
           e.toString().contains('Token tidak ditemukan') ||
@@ -100,37 +105,126 @@ class BookingCubit extends Cubit<BookingState> {
     }
   }
 
-  // ==================== NEW: Approve / Reject Booking ====================
+  /// Update booking status (approve/reject)
   Future<void> updateBookingStatus({
-    required String bookingId,
-    required String status, // 'approved' / 'rejected'
+    required int bookingId,
+    required String status,
   }) async {
     try {
+      print('═══════════════════════════════════════');
+      print('🔹 Cubit updateBookingStatus called');
+      print('🔹 Booking ID: $bookingId (${bookingId.runtimeType})');
+      print('🔹 Status: $status');
+      print('═══════════════════════════════════════');
+
       emit(state.copyWith(isLoading: true, errorMessage: null));
 
-      // Panggil repository untuk update status booking
-      await repository.updateBookingStatus(bookingId, status);
+      final updatedBooking = await repository.updateBookingStatus(
+        bookingId,
+        status,
+      );
 
-      // Update local state
-      final updatedBookings = state.bookings.map((booking) {
-        if (booking.id == bookingId) {
-          return booking.copyWith(status: status);
-        }
-        return booking;
-      }).toList();
+      print('✅ Status berhasil diubah ke: ${updatedBooking.status}');
+
+      // Reload dari server untuk sinkronisasi
+      await loadBookings();
 
       emit(state.copyWith(
-        bookings: updatedBookings,
         isLoading: false,
-        actionSuccessMessage: status == 'approved'
-            ? 'Booking berhasil disetujui'
-            : 'Booking berhasil ditolak',
+        actionSuccessMessage: _getSuccessMessage(status),
+      ));
+
+    } catch (e) {
+      print('❌ Error updating booking status: $e');
+
+      String errorMessage = e.toString();
+      
+      if (errorMessage.contains('401') || errorMessage.contains('Sesi telah berakhir')) {
+        emit(BookingState.unauthorized(errorMessage));
+      } else if (errorMessage.contains('404') || errorMessage.contains('tidak ditemukan')) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Booking dengan ID $bookingId tidak ditemukan',
+        ));
+      } else if (errorMessage.contains('403')) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Anda tidak memiliki izin untuk mengubah status booking',
+        ));
+      } else {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Gagal mengubah status booking: $errorMessage',
+        ));
+      }
+    }
+  }
+
+  /// Helper untuk success message
+  String _getSuccessMessage(String status) {
+    switch (status.toLowerCase()) {
+      case 'confirmed':
+        return 'Booking berhasil disetujui';
+      case 'rejected':
+        return 'Booking berhasil ditolak';
+      case 'completed':
+        return 'Booking berhasil diselesaikan';
+      case 'cancelled':
+        return 'Booking berhasil dibatalkan';
+      default:
+        return 'Status booking berhasil diubah';
+    }
+  }
+
+  /// Shortcut: Approve booking
+  Future<void> approveBooking(int bookingId) async {
+    await updateBookingStatus(bookingId: bookingId, status: 'confirmed');
+  }
+
+  /// Shortcut: Reject booking
+  Future<void> rejectBooking(int bookingId) async {
+    await updateBookingStatus(bookingId: bookingId, status: 'rejected');
+  }
+
+  /// Shortcut: Complete booking
+  Future<void> completeBooking(int bookingId) async {
+    await updateBookingStatus(bookingId: bookingId, status: 'completed');
+  }
+
+  /// Shortcut: Cancel booking
+  Future<void> cancelBooking(int bookingId) async {
+    await updateBookingStatus(bookingId: bookingId, status: 'cancelled');
+  }
+
+  // ✅ HAPUS method getBookingById karena tidak digunakan
+  /*
+  Future<void> getBookingById(int bookingId) async {
+    try {
+      emit(state.copyWith(isLoading: true));
+
+      final booking = await repository.fetchBookingById(bookingId);
+
+      emit(state.copyWith(
+        isLoading: false,
+        selectedBooking: booking, // ❌ Field ini tidak ada di BookingState
       ));
     } catch (e) {
+      print('❌ Error getting booking: $e');
       emit(state.copyWith(
         isLoading: false,
         errorMessage: e.toString(),
       ));
     }
+  }
+  */
+
+  /// Clear error message
+  void clearError() {
+    emit(state.copyWith(errorMessage: null));
+  }
+
+  /// Clear success message
+  void clearSuccessMessage() {
+    emit(state.copyWith(actionSuccessMessage: null));
   }
 }
