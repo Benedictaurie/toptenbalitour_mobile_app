@@ -9,10 +9,10 @@ Aplikasi mobile berbasis Android yang dikhususkan bagi admin/pemilik bisnis untu
 - **Status Monitoring:** Memantau status pembayaran pelanggan (Pending, Confirmed, Cancelled).
 
 ## 🛠️ Tech Stack
-- [cite_start]**Framework:** Flutter (Dart) 
-- [cite_start]**State Management:** BLoC (Business Logic Component) dengan pola Cubit 
-- [cite_start]**Networking:** Dio (HTTP Client) 
-- [cite_start]**Cloud Services:** Firebase Cloud Messaging (FCM)
+- **Framework:** Flutter (Dart) 
+- **State Management:** BLoC (Business Logic Component) dengan pola Cubit 
+- **Networking:** Dio (HTTP Client) 
+- **Cloud Services:** Firebase Cloud Messaging (FCM)
 
 ## ⚙️ Instalasi
 1. Pastikan Flutter SDK sudah terinstal.
