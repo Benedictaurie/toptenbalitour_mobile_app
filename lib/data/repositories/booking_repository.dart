@@ -15,6 +15,7 @@ class BookingRepository {
     }
 
     final response = await http.get(
+      // Uri.parse('$baseUrl/admin/admin/bookings'),
       Uri.parse('$baseUrl/admin/admin/bookings'),
       headers: {
         'Authorization': 'Bearer $token',
